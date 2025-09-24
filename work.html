@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Work Sample</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #c9a66b;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 32px;
+        }
+        .work-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+        .work-item {
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: transform 0.2s cubic-bezier(.23,.92,.41,.97), box-shadow 0.2s;
+            will-change: transform;
+            perspective: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Glossy overlay effect */
+        .glossy {
+            pointer-events: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(120deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.15) 60%, rgba(255,255,255,0.0) 100%);
+            mix-blend-mode: screen;
+            z-index: 2;
+        }
+        .work-img {
+            width: 100%;
+            max-width: 220px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            background: #e0e0e0;
+            position: relative;
+            z-index: 1;
+        }
+        .work-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #222;
+        }
+        .work-desc {
+            font-size: 0.98em;
+            color: #555;
+            margin-bottom: 16px;
+        }
+        .download-btn {
+            background: linear-gradient(90deg, #7a4e2d 0%, #c9a66b 100%);
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.98em;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0,120,212,0.12);
+        }
+        .download-btn:hover {
+            background: linear-gradient(90deg, #005fa3 0%, #009ec3 100%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="javascript:history.back()" class="download-btn" style="position:absolute;top:24px;left:24px;z-index:10;">&#8592; Home</a>
+        <h1>Previous Work Showcase</h1>
+        <div class="work-list" id="workList">
+            <!-- Work items will be injected by JS -->
+        </div>
+    </div>
+    <script>
+        // Example work data with images
+        const works = [
+            {
+                title: "Trivia Game",
+                desc: " Roll the dice, pick your challenge, and prove your smarts! Trivia Roll is the exciting party game where a lucky roll can be just as important as a brilliant mind",
+                file: "sample_works/Trivia game.zip",
+                img: "img/Trivia.png"
+            },
+            {
+                title: "Saliva Training Module",
+                desc: "This course is designed to give information on saliva testing including product training on the correct technique for using the DrugSense DS08.  ",
+                file: "sample_works/Saliva_Training.zip",
+                img: "img/saliva.png"
+            },
+            {
+                title: "Drag and Drop with Size Change",
+                desc: "Click and hold an item from the left and drag it into the category box on the right where you think it belongs. Release to drop it in place. Correctly placed items will lock in.",
+                file: "sample_works/D&D with size changing.zip",
+                img: "img/D&D with size changing.png"
+            },
+            {
+                title: "Engaging Clinical Trial Volunteers",
+                desc: "In this module, we provided ways to address common barriers to minority participation in clinical trials, addressing clinical trial myths, and understanding cultural and social factors that impact participation.",
+                file: "sample_works/Engaging Clinical Trial Volunteers.zip",
+                img: "img/ECTV.png"
+            },
+            {
+                title: "Introduction to Customer Centricity",
+                desc: "This course is designed to provide an overview of customer centricity, its importance in business, and strategies for implementing a customer-centric approach.",
+                file: "sample_works/Introduction to Customer Centricity – A Mirror to Window Approach.zip",
+                img: "img/ICCA.png"
+            },
+            {
+                title: "Introduction to Genre",
+                desc: "This course is designed to provide an overview of the concept of genre, its significance in various forms of media, and how it influences audience expectations and interpretations.",
+                file: "sample_works/INTRODUCTION TO GENRE.zip",
+                img: "img/ITG.png"
+            },
+            {
+                title: "Your Value Snapshot",
+                desc: "This course is designed to help individuals identify and communicate their unique value proposition in a professional context, enhancing their personal brand and career opportunities.",
+                file: "sample_works/Your Value Snapshot.zip",
+                img: "img/YVS.png"
+            },
+            {
+                title: "Core Values",
+                desc: " The design effectively uses a gamified gauge or dial metaphor with intuitive color-coding (red for poor, green for excellent) to make the content more engaging and visually appealing than a simple list. ",
+                file: "sample_works/Core Values.zip",
+                img: "img/CV.png"
+            }
+        ];
+
+        function createWorkItem(work) {
+            const item = document.createElement('div');
+            item.className = 'work-item';
+
+            // Glossy overlay
+            const glossy = document.createElement('div');
+            glossy.className = 'glossy';
+            item.appendChild(glossy);
+
+            const img = document.createElement('img');
+            img.className = 'work-img';
+            img.src = work.img;
+            img.alt = work.title;
+
+            const title = document.createElement('div');
+            title.className = 'work-title';
+            title.textContent = work.title;
+
+            const desc = document.createElement('div');
+            desc.className = 'work-desc';
+            desc.textContent = work.desc;
+
+            const download = document.createElement('a');
+            download.className = 'download-btn';
+            download.href = work.file;
+            download.download = '';
+            download.textContent = 'Download';
+
+            item.appendChild(img);
+            item.appendChild(title);
+            item.appendChild(desc);
+            item.appendChild(download);
+
+            // Parallax effect handlers
+            item.addEventListener('mousemove', function(e) {
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const rotateX = ((y - centerY) / centerY) * 10;
+                const rotateY = ((x - centerX) / centerX) * -10;
+                item.style.transform = `perspective(600px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.04)`;
+                item.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
+            });
+            item.addEventListener('mouseleave', function() {
+                item.style.transform = "perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)";
+                item.style.boxShadow = "0 1px 4px rgba(0,0,0,0.04)";
+            });
+
+            return item;
+        }
+
+        const workList = document.getElementById('workList');
+        works.forEach(work => {
+            workList.appendChild(createWorkItem(work));
+        });
+    </script>
+</body>
